@@ -43,7 +43,7 @@ The launcher starts the official command with a separate `work/ema-profile` home
 
 The built-in isolated development server uses port 3084 and binds `0.0.0.0`; the desktop connects through loopback using upstream's authentication. Debugging uses port 9333. These are upstream development behaviors; remote access is not an EMA feature yet. Do not launch another instance on those ports.
 
-Windows' known Documents folder is an OS setting and is not redirected by USERPROFILE. The upstream first-launch flow can create a default project there. The observed baseline did so; pre-existing files were not removed or replaced. For future fresh-profile tests, select a project inside the workspace instead of accepting a default Documents project.
+Windows' known Documents folder is an OS setting and is not redirected by USERPROFILE. The upstream first-launch flow can create a default project there. The observed baseline did so; pre-existing files were not removed or replaced. The external launcher now seeds only a new isolated profile's `firstLaunchOnboardingComplete` setting, preventing this first-launch side effect in future fresh profiles. Select a project inside the workspace.
 
 ## Verification
 
@@ -59,7 +59,7 @@ bun test --timeout 30000
 
 Run the tests outside the restricted agent sandbox, with temporary files in the workspace. The first sandbox run encountered local networking/file-operation restrictions; the native Windows repeat passed all 131 desktop tests.
 
-The repository tracks symbolic links, including `packages/app/src/custom-elements.d.ts`. A Windows clone with `core.symlinks=false` writes the link target path as plain text, causing TS1128. Enable Windows Developer Mode or obtain symbolic-link privileges, then enable `core.symlinks` locally and re-check out only the tracked symbolic links. Do not replace these with committed duplicate files. See the external setup report for the final observed check status.
+The repository tracks 43 symbolic links, including `packages/app/src/custom-elements.d.ts`. A Windows clone with `core.symlinks=false` writes the link target path as plain text, causing TS1128. This was resolved after the user enabled Windows Developer Mode: the local clone now has `core.symlinks=true`, and all tracked links were checked out as real symbolic links. No source workaround or duplicate files were committed. Desktop typecheck passes. See the external setup report for the final full-repository check status.
 
 ## Next change
 
